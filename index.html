@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>eonlu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sekuya&family=Tektur:wght@400..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Monomakh&family=Sekuya&family=Tektur:wght@400..900&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, #1a1a1a 0%, #000 70%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,0.015),
+      rgba(255,255,255,0.015) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+  color: #d6d6d6;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  justify-content: center;
+}
+
+body {
+  font-family: "monomakh", system-ui, sans-serif;
+}
+
+.container {
+  width: 100%;
+  max-width: 900px;
+  padding: 40px 20px;
+}
+
+h1 {
+  font-family: "Sekuya", sans-serif;
+  font-weight: 700;
+  font-optical-sizing: auto;
+  font-variation-settings: "wdth" 100;
+}
+
+
+.subtitle {
+  font-size: 12px;
+  opacity: 0.4;
+  margin-bottom: 30px;
+}
+
+.player {
+  background: linear-gradient(180deg, #111, #0b0b0b);
+  border: 1px solid #222;
+  padding: 18px;
+  margin-bottom: 25px;
+}
+
+.track-title {
+  font-size: 20px;
+  letter-spacing: 1px;
+  opacity: .7;
+  margin-bottom: 12px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+
+.controls button {
+  width: 42px;
+  height: 32px;
+  background: #0d0d0d;
+  border: 1px solid #222;
+  color: #d6d6d6;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.controls button:hover {
+  background: #151515;
+}
+
+.volume {
+  margin-left: auto;
+  width: 90px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  height: 3px;
+  background: #222;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  background: #aaa;
+  cursor: pointer;
+}
+
+.progress {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.playlist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #222;
+}
+
+.track {
+  padding: 13px 16px;
+  border-bottom: 1px solid #222;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.track:hover { background: #111; }
+
+.track.active {
+  background: #111;
+  color: #fff;
+}
+
+footer {
+  margin-top: 30px;
+  font-size: 11px;
+  opacity: 0.3;
+  text-align: center;
+}
+
+audio { display: none; }
+
+.noise {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='.17'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999;
+}
+
+#shuffle {
+  background: #0d0d0d;
+  border: 1px solid #222;
+  color: #d6d6d6;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#shuffle.active {
+  color: #1efc5d; /* яркий зеленый при включении */
+  border-color: #1efc5d;
+}
+
+#shuffle:hover {
+  background: #151515;
+}
+
+</style>
+</head>
+
+<div class="noise"></div>
+
+<body>
+
+<div class="container">
+  <h1>EONLU</h1>
+  <div class="subtitle">без обьяснений.</div>
+
+  <div class="player">
+    <div class="track-title" id="trackTitle">—</div>
+    
+    <div class="controls">
+      <button id="prev">⟵</button>
+      <button id="play">▶</button>
+      <button id="next">⟶</button>
+      <input type="range" id="volume" class="volume" min="0" max="1" step="0.01" value="0.8">
+    </div>
+
+    <input type="range" id="progress" class="progress" min="0" max="100" value="0">
+    <audio id="audio"></audio>
+  </div>
+
+  <ul class="playlist">
+    <li class="track active" data-src="beats/emokid s 2006.mp3">emokid s 2006</li>
+    <li class="track" data-src="beats/how many times 8.mp3">how many times 8</li>
+    <li class="track" data-src="beats/бинты.mp3">бинты</li>
+    <li class="track" data-src="beats/давно закончились места.mp3">давно закончились места</li>
+    <li class="track" data-src="beats/длинные руки.mp3">длинные руки</li>
+    <li class="track" data-src="beats/дохло.mp3">дохло</li>
+    <li class="track" data-src="beats/загрузился.mp3">загрузился</li>
+    <li class="track" data-src="beats/лес.mp3">лес</li>
+    <li class="track" data-src="beats/никотин.mp3">никотин</li>
+    <li class="track" data-src="beats/нуклир.mp3">нуклир</li>
+    <li class="track" data-src="beats/отвратительно.mp3">отвратительно</li>
+    <li class="track" data-src="beats/отравил собаку.mp3">отравил собаку</li>
+    <li class="track" data-src="beats/полли..mp3">полли.</li>
+    <li class="track" data-src="beats/полоса.mp3">полоса</li>
+    <li class="track" data-src="beats/привет кристалы^^.mp3">привет кристалы^^</li>
+    <li class="track" data-src="beats/прости паша.mp3">прости паша</li>
+    <li class="track" data-src="beats/растрата себя.mp3">растрата себя</li>
+    <li class="track" data-src="beats/самозванец.mp3">самозванец</li>
+    <li class="track" data-src="beats/сканирование.mp3">сканирование</li>
+    <li class="track" data-src="beats/скоростях.mp3">скоростях</li>
+    <li class="track" data-src="beats/спейс.mp3">спейс</li>
+    <li class="track" data-src="beats/стремление.mp3">стремление</li>
+    <li class="track" data-src="beats/у вас рак.mp3">у вас рак</li>
+    <li class="track" data-src="beats/утро внутри.mp3">утро внутри</li>
+    <li class="track" data-src="beats/я рад, спасибо.mp3">я рад, спасибо</li>
+    <li class="track" data-src="beats/я снова ударился о меланхолию.mp3">я снова ударился о меланхолию</li>
+    <li class="track" data-src="beats/я тебя выиграл.mp3">я тебя выиграл</li>
+  </ul>
+
+  <footer>привет</footer>
+</div>
+
+<script>
+const audio = document.getElementById('audio');
+const tracks = Array.from(document.querySelectorAll('.track'));
+const playBtn = document.getElementById('play');
+const nextBtn = document.getElementById('next');
+const prevBtn = document.getElementById('prev');
+const progress = document.getElementById('progress');
+const volume = document.getElementById('volume');
+const title = document.getElementById('trackTitle');
+
+let currentIndex = 0;
+
+/**
+ * Загружает трек
+ * autoplay = true  → сразу играет
+ * autoplay = false → просто подгружается
+ */
+function loadTrack(index, autoplay = false) {
+  tracks.forEach(t => t.classList.remove('active'));
+  const track = tracks[index];
+  track.classList.add('active');
+
+  audio.src = track.dataset.src;
+  title.textContent = track.textContent.trim();
+  currentIndex = index;
+
+  if (autoplay) {
+    audio.play();
+    playBtn.textContent = '❚❚';
+  } else {
+    audio.pause();
+    playBtn.textContent = '▶';
+  }
+}
+
+/* ▶ / ❚❚ */
+playBtn.addEventListener('click', () => {
+  if (audio.paused) {
+    audio.play();
+    playBtn.textContent = '❚❚';
+  } else {
+    audio.pause();
+    playBtn.textContent = '▶';
+  }
+});
+
+/* ⟵ ⟶ */
+nextBtn.addEventListener('click', () => {
+  loadTrack((currentIndex + 1) % tracks.length, true);
+});
+
+prevBtn.addEventListener('click', () => {
+  loadTrack((currentIndex - 1 + tracks.length) % tracks.length, true);
+});
+
+/* клик по плейлисту — сразу играет */
+tracks.forEach((track, index) => {
+  track.addEventListener('click', () => {
+    loadTrack(index, true);
+  });
+});
+
+/* прогресс */
+audio.addEventListener('timeupdate', () => {
+  progress.value = (audio.currentTime / audio.duration) * 100 || 0;
+});
+
+progress.addEventListener('input', () => {
+  audio.currentTime = (progress.value / 100) * audio.duration;
+});
+
+/* громкость */
+volume.addEventListener('input', () => {
+  audio.volume = volume.value;
+});
+
+/* автопереход */
+audio.addEventListener('ended', () => {
+  loadTrack((currentIndex + 1) % tracks.length, true);
+});
+
+/* клавиатура */
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space') {
+    e.preventDefault();
+    playBtn.click();
+  }
+  if (e.code === 'ArrowRight') nextBtn.click();
+  if (e.code === 'ArrowLeft') prevBtn.click();
+});
+
+/* старт */
+audio.volume = volume.value;
+loadTrack(0, false);
+</script>
+
+
+</body>
+</html>
