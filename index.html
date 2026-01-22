@@ -197,7 +197,6 @@ audio { display: none; }
       <button id="play">▶</button>
       <button id="next">⟶</button>
 
-      <!-- ГРОМКОСТЬ -->
       <input type="range"
         id="volume"
         class="volume"
@@ -256,6 +255,9 @@ const volume = document.getElementById('volume');
 const title = document.getElementById('trackTitle');
 
 let currentIndex = 0;
+
+/* ===== ДОБАВЛЕНО: СОФТ-ЛИМИТ ===== */
+const MAX_VOLUME = 0.6;
 
 /* ===== ВИЗУАЛ ГРОМКОСТИ С КРАСНОЙ ЗОНОЙ ===== */
 function updateVolumeUI(val) {
@@ -333,7 +335,8 @@ progress.addEventListener('input', () => {
 
 /* громкость */
 volume.addEventListener('input', () => {
-  audio.volume = volume.value;
+  audio.volume = volume.value;                 // ТВОЯ СТРОКА
+  audio.volume = Math.min(audio.volume, MAX_VOLUME); // ДОБАВЛЕНО
   updateVolumeUI(volume.value);
 });
 
@@ -353,7 +356,8 @@ document.addEventListener('keydown', e => {
 });
 
 /* старт */
-audio.volume = 0.5;
+audio.volume = 0.5;                            // ТВОЯ СТРОКА
+audio.volume = Math.min(audio.volume, MAX_VOLUME); // ДОБАВЛЕНО
 updateVolumeUI(0.5);
 loadTrack(0, false);
 </script>
