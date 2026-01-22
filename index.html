@@ -211,7 +211,6 @@ audio { display: none; }
   </div>
 
   <ul class="playlist">
-    <!-- ПЛЕЙЛИСТ БЕЗ ИЗМЕНЕНИЙ -->
     <li class="track active" data-src="beats/emokid s 2006.mp3">emokid s 2006</li>
     <li class="track" data-src="beats/how many times 8.mp3">how many times 8</li>
     <li class="track" data-src="beats/бинты.mp3">бинты</li>
@@ -255,9 +254,6 @@ const volume = document.getElementById('volume');
 const title = document.getElementById('trackTitle');
 
 let currentIndex = 0;
-
-/* ===== ДОБАВЛЕНО: СОФТ-ЛИМИТ ===== */
-const MAX_VOLUME = 0.6;
 
 /* ===== ВИЗУАЛ ГРОМКОСТИ С КРАСНОЙ ЗОНОЙ ===== */
 function updateVolumeUI(val) {
@@ -333,10 +329,9 @@ progress.addEventListener('input', () => {
   audio.currentTime = (progress.value / 100) * audio.duration;
 });
 
-/* громкость */
+/* громкость — ПРАВИЛЬНАЯ КРИВАЯ */
 volume.addEventListener('input', () => {
-  audio.volume = volume.value;                 // ТВОЯ СТРОКА
-  audio.volume = Math.min(audio.volume, MAX_VOLUME); // ДОБАВЛЕНО
+  audio.volume = Math.pow(volume.value, 2);
   updateVolumeUI(volume.value);
 });
 
@@ -356,8 +351,7 @@ document.addEventListener('keydown', e => {
 });
 
 /* старт */
-audio.volume = 0.5;                            // ТВОЯ СТРОКА
-audio.volume = Math.min(audio.volume, MAX_VOLUME); // ДОБАВЛЕНО
+audio.volume = Math.pow(0.5, 2);
 updateVolumeUI(0.5);
 loadTrack(0, false);
 </script>
